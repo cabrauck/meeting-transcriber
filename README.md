@@ -109,23 +109,37 @@ recmeet -Meeting "Project Kickoff"
 
 This creates a WAV file in `$HOME\Recordings` by default.
 
-### Option B: Direct ffmpeg command
-
-Equivalent command from the PowerShell function:
+### List available audio devices (DirectShow)
 
 ```powershell
-ffmpeg ^
-  -rtbufsize 512M ^
-  -f dshow ^
-  -i "audio=@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\wave_{8E14655A-AAA4-4247-B5F1-DC05EF76DA36}" ^
-  -ac 1 ^
-  -ar 16000 ^
-  -metadata title="Project Kickoff" ^
-  -metadata comment="start=2026-03-05 09:00" ^
-  "C:\Users\<USER>\Recordings\2026-03-05_09-00__Project_Kickoff.wav"
+ffmpeg -list_devices true -f dshow -i dummy
 ```
 
-> Note: the `-i` audio device string is machine-specific. Replace it with your local input device if needed.
+Use the reported audio device name/identifier in `-i "audio=..."`.
+
+### Option B: Direct ffmpeg command (PowerShell)
+
+Equivalent command from the PowerShell function, with automatic start timestamp from `Get-Date`:
+
+```powershell
+$meeting = "Project Kickoff"
+$date = Get-Date -Format 'yyyy-MM-dd'
+$time = Get-Date -Format 'HH-mm'
+$timeDisplay = $time -replace '-', ':'
+$outFile = "C:\Users\<USER>\Recordings\${date}_${time}__Project_Kickoff.wav"
+
+ffmpeg `
+  -rtbufsize 512M `
+  -f dshow `
+  -i "audio=@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\wave_{8E14655A-AAA4-4247-B5F1-DC05EF76DA36}" `
+  -ac 1 `
+  -ar 16000 `
+  -metadata title="$meeting" `
+  -metadata comment="start=$date $timeDisplay" `
+  "$outFile"
+```
+
+> Note: the `-i` audio device string is machine-specific. Replace it with your local input device.
 
 ---
 
@@ -167,6 +181,22 @@ Set the token as env var (see above).
 - Check NVIDIA drivers
 - Confirm CUDA profile (`meeting-transcriber-cuda`) is active
 - Check script output (`CUDA available: True/False`)
+
+### Audio device not visible in ffmpeg
+1. Show devices via ffmpeg:
+   ```powershell
+   ffmpeg -list_devices true -f dshow -i dummy
+   ```
+2. Open classic Sound control panel:
+   ```powershell
+   mmsys.cpl
+   ```
+3. In **Recording** tab, right-click inside the device list and enable:
+   - **Show Disabled Devices**
+   - **Show Disconnected Devices**
+4. Enable the required device and set permissions in Windows privacy settings:
+   - **Settings → Privacy & security → Microphone**
+   - Allow microphone access (system + desktop apps)
 
 ### German transcription quality is poor
 - Try `LANGUAGE=de`
