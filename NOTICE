@@ -1,0 +1,14 @@
+This project, meeting-transcriber, is licensed under the Apache License 2.0.
+
+It uses and/or depends on third-party components under their own licenses.
+In particular, this project acknowledges:
+
+- OpenAI Whisper (MIT License)
+  https://github.com/openai/whisper
+  Copyright (c) 2022 OpenAI
+
+- pyannote-audio (MIT License)
+  https://github.com/pyannote/pyannote-audio
+  Copyright (c) 2020 CNRS
+
+For details, see THIRD_PARTY_LICENSES.md.
