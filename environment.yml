@@ -1,0 +1,24 @@
+name: meeting-transcriber
+channels:
+  - conda-forge
+dependencies:
+  - python>=3.10,<3.15
+  - pip
+  - ffmpeg
+
+  - pip:
+      # Keep PyPI as primary index, add PyTorch CUDA wheels as extra index
+      - --index-url https://pypi.org/simple
+      - --extra-index-url https://download.pytorch.org/whl/cu128
+
+      # CUDA-enabled torch (uses GPU if available, else CPU fallback)
+      - torch==2.10.0+cu128
+      - torchaudio==2.10.0+cu128
+
+      # diarization + transcription
+      - pyannote-audio==4.0.4
+      - faster-whisper==1.2.1
+
+      # reproducibility (optional but fine)
+      - huggingface-hub==1.5.0
+      - soundfile==0.13.1
