@@ -299,11 +299,12 @@ Special thanks to the projects and teams behind the core building blocks used he
 
 - OpenAI Whisper: https://github.com/openai/whisper
 - pyannote-audio: https://github.com/pyannote/pyannote-audio
+- FFmpeg Windows builds by gyan.dev: https://www.gyan.dev/ffmpeg/builds/
 
 ## License
 
 Licensed under the Apache License 2.0. See [LICENSE](./LICENSE).
 
-Third-party components keep their own licenses (e.g., MIT). See:
+Third-party components keep their own licenses (e.g., MIT, GPL/LGPL depending on component/build). See:
 - [NOTICE](./NOTICE)
 - [THIRD_PARTY_LICENSES.md](./THIRD_PARTY_LICENSES.md)

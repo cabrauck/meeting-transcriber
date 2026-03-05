@@ -11,4 +11,9 @@ In particular, this project acknowledges:
   https://github.com/pyannote/pyannote-audio
   Copyright (c) 2020 CNRS
 
+- FFmpeg (installed separately by user), including gyan.dev Windows builds
+  FFmpeg project: https://ffmpeg.org/
+  gyan.dev builds: https://www.gyan.dev/ffmpeg/builds/
+  License note: FFmpeg is generally LGPL with optional GPL components; gyan.dev states their builds are GPLv3.
+
 For details, see THIRD_PARTY_LICENSES.md.

@@ -39,6 +39,19 @@ MIT license text (reference):
 > The above copyright notice and this permission notice shall be included in all
 > copies or substantial portions of the Software.
 
+## FFmpeg / gyan.dev Windows builds
+
+- FFmpeg project: https://ffmpeg.org/
+- gyan.dev Windows builds: https://www.gyan.dev/ffmpeg/builds/
+- License note:
+  - FFmpeg itself is generally LGPL (with optional GPL parts).
+  - gyan.dev states their distributed Windows builds are GPLv3.
+
+Important:
+- This repository does not redistribute FFmpeg binaries.
+- Users install FFmpeg separately on their own systems.
+- FFmpeg and build-distributor license terms still apply to that installation and usage.
+
 ---
 
 Note: Third-party licenses remain in effect for their respective components.
