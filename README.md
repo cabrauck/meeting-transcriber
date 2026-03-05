@@ -262,6 +262,18 @@ Set the token as env var (see above).
 - [ ] Audio device configuration without hardcoding
 - [ ] Optional mapping of speaker labels (`SPK1`) to real names
 - [ ] CLI wrapper (e.g. `transcribe.ps1`) for simpler execution
+- [ ] Progress reporting per phase (ASR / diarization / merge) with runtime stats
+- [ ] Graceful cancel/abort handling for long-running transcriptions
+- [ ] Batch/queue mode for processing multiple files in one run
+- [ ] Optional watch mode for a recordings folder
+- [ ] JSON export for downstream automation workflows
+- [ ] Optional additional export formats (HTML/DOCX)
+- [ ] Post-processing dictionary (search/replace for recurring domain terms)
+- [ ] Merge-by-sentence post-processing option
+- [ ] Speaker review workflow (label correction + mapping persistence)
+- [ ] Optional video input support (extract audio from MP4/MKV/MOV)
+- [ ] Subtitle metrics (CPS/WPM/segment duration) for readability checks
+- [ ] Optional SMPTE/custom timecode mode for media workflows
 
 ---
 
