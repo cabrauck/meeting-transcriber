@@ -170,6 +170,26 @@ Generated files (next to the WAV):
 - `ASR_INITIAL_PROMPT` (optional)
 - `DIARIZATION_MODEL` (default: `pyannote/speaker-diarization-community-1`)
 
+### What `ASR_INITIAL_PROMPT` does and how to use it
+
+`ASR_INITIAL_PROMPT` is a startup hint for Whisper. It gives the model context before transcription starts.
+
+Use it to improve recognition of:
+- domain-specific terms (e.g. PKI, OCSP, CRL, ADCS)
+- company/product names
+- person names and recurring vocabulary
+
+PowerShell example:
+
+```powershell
+$env:ASR_INITIAL_PROMPT = "This is a German IT meeting about PKI, certificates, HSM, Active Directory, m2trust."
+python .\transcribe_meeting.py "C:\Users\<USER>\Recordings\2026-03-05_09-00__Project_Kickoff.wav"
+```
+
+Notes:
+- Keep the prompt short and specific (1–3 sentences).
+- It is a hint, not a strict custom dictionary.
+
 ---
 
 ## Troubleshooting
