@@ -1,42 +1,56 @@
 # meeting-transcriber
 
-Lokales Meeting-Transkriptionsprojekt für Windows:
-- Aufnahme als WAV (mono, 16 kHz) via `ffmpeg`
-- Speech-to-Text mit `faster-whisper`
-- Sprecher-Diarisierung mit `pyannote-audio`
-- Ausgabe als `.txt`, `.srt`, `.md`
+Local Windows meeting transcription project:
+- Record meetings as WAV (mono, 16 kHz) using `ffmpeg`
+- Speech-to-text with `faster-whisper`
+- Speaker diarization with `pyannote-audio`
+- Outputs: `.txt`, `.srt`, `.md`
 
-Ziel: **lokal laufen**, mit GPU-Beschleunigung wenn verfügbar (CUDA), sonst CPU-Fallback.
+Goal: run **locally**, use GPU acceleration when available (CUDA), otherwise CPU fallback.
 
 ---
 
-## Voraussetzungen
+## Requirements
 
 - Windows 10/11
-- [Miniforge3](https://github.com/conda-forge/miniforge) (mit `mamba`)
-- `ffmpeg` im PATH (oder via Conda-Umgebung)
-- Optional: NVIDIA GPU + aktuelle Treiber für CUDA-Beschleunigung
-- Hugging Face Token für Diarisierung (`pyannote` Modelle)
+- [Miniforge3](https://github.com/conda-forge/miniforge) (with `mamba`)
+- `ffmpeg` available on the machine
+- Optional: NVIDIA GPU + current drivers for CUDA acceleration
+- Hugging Face token for diarization (`pyannote` models)
+
+### Install FFmpeg (Gyan build) via winget
+
+Install FFmpeg from Gyan.dev package on Windows:
+
+```powershell
+winget install --id Gyan.FFmpeg --exact
+```
+
+Then verify:
+
+```powershell
+ffmpeg -version
+```
 
 ---
 
-## Umgebungen (portable Windows Setup)
+## Environments (portable Windows setup)
 
-Es gibt zwei Profile:
+Two environment profiles are provided:
 
-- **`environment-cuda.yml`** → Desktop mit NVIDIA GPU (CUDA)
-- **`environment-cpu.yml`** → CPU-only (z. B. Laptop ohne CUDA)
+- **`environment-cuda.yml`** → Desktop with NVIDIA GPU (CUDA)
+- **`environment-cpu.yml`** → CPU-only (e.g. laptop without CUDA)
 
-> Das Python-Skript erkennt CUDA zur Laufzeit (`torch.cuda.is_available()`) und nutzt ansonsten CPU.
+> The Python script checks CUDA at runtime (`torch.cuda.is_available()`) and falls back to CPU automatically.
 
-### 1) CUDA-Profil erstellen
+### 1) Create CUDA profile
 
 ```powershell
 mamba env create -f environment-cuda.yml
 mamba activate meeting-transcriber-cuda
 ```
 
-### 2) CPU-Profil erstellen
+### 2) Create CPU profile
 
 ```powershell
 mamba env create -f environment-cpu.yml
@@ -45,56 +59,79 @@ mamba activate meeting-transcriber-cpu
 
 ---
 
-## Hugging Face Token setzen
+## Set Hugging Face token
 
-PowerShell (temporär in aktueller Session):
+PowerShell (temporary for current session):
 
 ```powershell
 $env:HUGGINGFACE_TOKEN = "hf_xxx..."
 ```
 
-Optional zusätzlich:
+Optional additional settings:
 
 ```powershell
 $env:DIARIZATION_MODEL = "pyannote/speaker-diarization-community-1"
-$env:ASR_MODEL = "large-v3-turbo"  # alternativ: large-v3
-$env:LANGUAGE = "de"               # oder "auto"
+$env:ASR_MODEL = "large-v3-turbo"  # alternative: large-v3
+$env:LANGUAGE = "de"               # or "auto"
 ```
 
 ---
 
-## Aufnahme starten (PowerShell)
+## Record audio
 
-Im Repository ist eine Funktion `Start-MeetingRec` enthalten (`function Start-MeetingRec.ps1`).
+You can either:
 
-Beispiel:
+1) use the PowerShell helper function (`recmeet`), or
+2) run `ffmpeg` directly.
+
+### Option A: PowerShell function (`recmeet`)
+
+Repository includes `function Start-MeetingRec.ps1`.
 
 ```powershell
 . .\function Start-MeetingRec.ps1
-recmeet -Meeting "Projekt Kickoff"
+recmeet -Meeting "Project Kickoff"
 ```
 
-Das erzeugt u. a. eine WAV-Datei im Zielordner (`$HOME\Recordings` standardmäßig).
+This creates a WAV file in `$HOME\Recordings` by default.
+
+### Option B: Direct ffmpeg command
+
+Equivalent command from the PowerShell function:
+
+```powershell
+ffmpeg ^
+  -rtbufsize 512M ^
+  -f dshow ^
+  -i "audio=@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\wave_{8E14655A-AAA4-4247-B5F1-DC05EF76DA36}" ^
+  -ac 1 ^
+  -ar 16000 ^
+  -metadata title="Project Kickoff" ^
+  -metadata comment="start=2026-03-05 09:00" ^
+  "C:\Users\<USER>\Recordings\2026-03-05_09-00__Project_Kickoff.wav"
+```
+
+> Note: the `-i` audio device string is machine-specific. Replace it with your local input device if needed.
 
 ---
 
-## Transkription + Diarisierung ausführen
+## Run transcription + diarization
 
 ```powershell
-python .\transcribe_meeting.py "C:\Users\<USER>\Recordings\2026-03-05_09-00__Projekt_Kickoff.wav"
+python .\transcribe_meeting.py "C:\Users\<USER>\Recordings\2026-03-05_09-00__Project_Kickoff.wav"
 ```
 
-Erzeugte Dateien (neben der WAV):
+Generated files (next to the WAV):
 - `*_transcript.txt`
 - `*_transcript.srt`
 - `*_transcript.md`
 
 ---
 
-## Wichtige Parameter (Env Vars)
+## Important parameters (env vars)
 
 - `ASR_MODEL` (default: `large-v3-turbo`)
-- `LANGUAGE` (default: `en`, empfohlen für DE: `de` oder `auto`)
+- `LANGUAGE` (default: `en`, for German typically `de` or `auto`)
 - `ASR_VAD_FILTER` (default: `true`)
 - `ASR_VAD_MIN_SILENCE_MS` (default: `300`)
 - `ASR_BEAM_SIZE` (default: `5`)
@@ -110,28 +147,28 @@ Erzeugte Dateien (neben der WAV):
 ## Troubleshooting
 
 ### `HUGGINGFACE_TOKEN is not set`
-Token als Env Var setzen (siehe oben).
+Set the token as env var (see above).
 
-### CUDA wird nicht genutzt
-- NVIDIA Treiber prüfen
-- CUDA-Profil (`meeting-transcriber-cuda`) aktiv?
-- Ausgabe im Script prüfen (`CUDA available: True/False`)
+### CUDA is not used
+- Check NVIDIA drivers
+- Confirm CUDA profile (`meeting-transcriber-cuda`) is active
+- Check script output (`CUDA available: True/False`)
 
-### Schlechte Erkennung bei Deutsch
-- `LANGUAGE=de` testen
-- optional `ASR_INITIAL_PROMPT` mit domänenspezifischen Begriffen setzen
+### German transcription quality is poor
+- Try `LANGUAGE=de`
+- Optionally set `ASR_INITIAL_PROMPT` with domain-specific terms
 
 ---
 
 ## Roadmap / To-Do
 
-- [ ] HF-Cache + echter Offline-Modus (nach initialem Modell-Download)
-- [ ] Audio-Device Konfiguration ohne Hardcoding
-- [ ] Optionales Mapping von Sprecherlabels (`SPK1`) auf Namen
-- [ ] CLI-Wrapper (z. B. `transcribe.ps1`) für einfacheren Start
+- [ ] HF cache + true offline mode (after initial model download)
+- [ ] Audio device configuration without hardcoding
+- [ ] Optional mapping of speaker labels (`SPK1`) to real names
+- [ ] CLI wrapper (e.g. `transcribe.ps1`) for simpler execution
 
 ---
 
-## Lizenz
+## License
 
-Aktuell nicht festgelegt.
+Not defined yet.
