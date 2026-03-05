@@ -259,21 +259,37 @@ Set the token as env var (see above).
 ## Roadmap / To-Do
 
 - [ ] HF cache + true offline mode (after initial model download)
+  - Ensure models can be reused fully offline after the initial fetch.
 - [ ] Audio device configuration without hardcoding
+  - Make input device selection configurable instead of fixed IDs.
 - [ ] Optional mapping of speaker labels (`SPK1`) to real names
+  - Persist speaker aliases so transcripts stay human-readable.
 - [ ] CLI wrapper (e.g. `transcribe.ps1`) for simpler execution
+  - Provide a single command entry point with sane defaults.
 - [ ] Progress reporting per phase (ASR / diarization / merge) with runtime stats
+  - Show transparent per-step progress and timing for long jobs.
 - [ ] Graceful cancel/abort handling for long-running transcriptions
+  - Allow safe interruption without corrupting outputs.
 - [ ] Batch/queue mode for processing multiple files in one run
+  - Process folders of recordings automatically in sequence.
 - [ ] Optional watch mode for a recordings folder
+  - Auto-start processing when new recordings appear.
 - [ ] JSON export for downstream automation workflows
+  - Output structured machine-readable transcript data.
 - [ ] Optional additional export formats (HTML/DOCX)
+  - Support easier sharing and documentation workflows.
 - [ ] Post-processing dictionary (search/replace for recurring domain terms)
+  - Standardize frequent terms, names, and abbreviations.
 - [ ] Merge-by-sentence post-processing option
+  - Improve readability by merging fragmented segments.
 - [ ] Speaker review workflow (label correction + mapping persistence)
+  - Enable manual speaker fixes and reuse them later.
 - [ ] Optional video input support (extract audio from MP4/MKV/MOV)
+  - Accept video files directly by extracting audio with ffmpeg.
 - [ ] Subtitle metrics (CPS/WPM/segment duration) for readability checks
+  - Add subtitle quality indicators for pacing and legibility.
 - [ ] Optional SMPTE/custom timecode mode for media workflows
+  - Provide frame-accurate timing for editing/broadcast use cases.
 
 ---
 
