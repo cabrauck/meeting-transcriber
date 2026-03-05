@@ -255,4 +255,4 @@ Set the token as env var (see above).
 
 ## License
 
-Not defined yet.
+Licensed under the Apache License 2.0. See [LICENSE](./LICENSE).
