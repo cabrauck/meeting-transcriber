@@ -1,0 +1,22 @@
+name: meeting-transcriber-cpu
+channels:
+  - conda-forge
+dependencies:
+  - python>=3.10,<3.15
+  - pip
+  - ffmpeg
+
+  - pip:
+      - --index-url https://pypi.org/simple
+
+      # CPU wheels
+      - torch==2.10.0
+      - torchaudio==2.10.0
+
+      # diarization + transcription
+      - pyannote-audio==4.0.4
+      - faster-whisper==1.2.1
+
+      # reproducibility (optional but fine)
+      - huggingface-hub==1.5.0
+      - soundfile==0.13.1
