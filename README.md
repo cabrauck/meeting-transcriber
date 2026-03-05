@@ -202,7 +202,7 @@ Use it to improve recognition of:
 PowerShell example:
 
 ```powershell
-$env:ASR_INITIAL_PROMPT = "This is a German IT meeting about PKI, certificates, HSM, Active Directory, m2trust."
+$env:ASR_INITIAL_PROMPT = "This is a German IT meeting about PKI, certificates, HSM, Active Directory."
 python .\transcribe_meeting.py "C:\Users\<USER>\Recordings\2026-03-05_09-00__Project_Kickoff.wav"
 ```
 
