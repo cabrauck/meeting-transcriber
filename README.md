@@ -143,6 +143,45 @@ ffmpeg `
 
 ---
 
+## Pipeline overview
+
+```mermaid
+%%{init: {
+"theme": "dark",
+"themeVariables": {
+"primaryColor": "#1f2937",
+"primaryTextColor": "#e5e7eb",
+"primaryBorderColor": "#60a5fa",
+"lineColor": "#93c5fd",
+"secondaryColor": "#111827",
+"tertiaryColor": "#0b1220",
+"fontFamily": "Virgil, Comic Sans MS, cursive"
+},
+"flowchart": { "curve": "basis" },
+"look": "handDrawn"
+}}%%
+
+flowchart LR
+A("🎙️ Input Audio<br/>WAV mono 16kHz")
+
+B("📝 Speech-to-Text (ASR)<br/>faster-whisper<br/>large-v2 (DE) / large-v3 (EN)")
+C("🧑‍🤝‍🧑 Speaker Diarization<br/>pyannote/community-1<br/>'who spoke when'")
+
+D("⏱️ Text Segments<br/>timestamp + transcript text")
+E("🪪 Speaker Segments<br/>SPK1 / SPK2 / ... + time ranges")
+
+F("🔗 Merge / Alignment<br/>assign speaker labels to ASR text")
+G("📄 Final Transcript<br/>[time] SPKx: text<br>💾 Output Files<br/>TXT + SRT + MD")
+
+
+A --> B --> D --> F --> G
+A --> C --> E --> F
+
+I("🧠 Optional later:<br/>Speaker identity mapping<br/>SPK1 = Alice") -.-> F
+```
+
+---
+
 ## Run transcription + diarization
 
 ```powershell
