@@ -91,14 +91,19 @@ $env:LANGUAGE = "de"         # or "auto"
 
 ---
 
+## List available audio devices (DirectShow)
+
+```powershell
+ffmpeg -list_devices true -f dshow -i dummy
+```
+
+Use the reported audio device name/identifier in `-i "audio=..."`.
+
+---
+
 ## Record audio
 
-You can either:
-
-1) use the PowerShell helper function (`recmeet`), or
-2) run `ffmpeg` directly.
-
-### Option A: PowerShell function (`recmeet`)
+Use the PowerShell helper function (`recmeet`).
 
 Repository includes `function Start-MeetingRec.ps1`.
 
@@ -108,38 +113,6 @@ recmeet -Meeting "Project Kickoff"
 ```
 
 This creates a WAV file in `$HOME\Recordings` by default.
-
-### List available audio devices (DirectShow)
-
-```powershell
-ffmpeg -list_devices true -f dshow -i dummy
-```
-
-Use the reported audio device name/identifier in `-i "audio=..."`.
-
-### Option B: Direct ffmpeg command (PowerShell)
-
-Equivalent command from the PowerShell function, with automatic start timestamp from `Get-Date`:
-
-```powershell
-$meeting = "Project Kickoff"
-$date = Get-Date -Format 'yyyy-MM-dd'
-$time = Get-Date -Format 'HH-mm'
-$timeDisplay = $time -replace '-', ':'
-$outFile = "C:\Users\<USER>\Recordings\${date}_${time}__Project_Kickoff.wav"
-
-ffmpeg `
-  -rtbufsize 512M `
-  -f dshow `
-  -i "audio=@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\wave_{8E14655A-AAA4-4247-B5F1-DC05EF76DA36}" `
-  -ac 1 `
-  -ar 16000 `
-  -metadata title="$meeting" `
-  -metadata comment="start=$date $timeDisplay" `
-  "$outFile"
-```
-
-> Note: the `-i` audio device string is machine-specific. Replace it with your local input device.
 
 ---
 
