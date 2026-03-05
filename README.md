@@ -18,6 +18,20 @@ Goal: run **locally**, use GPU acceleration when available (CUDA), otherwise CPU
 - Optional: NVIDIA GPU + current drivers for CUDA acceleration
 - Hugging Face token for diarization (`pyannote` models)
 
+### Install Miniforge3 via winget
+
+Install Miniforge3 on Windows:
+
+```powershell
+winget install --id CondaForge.Miniforge3 --exact
+```
+
+Then open a new terminal and verify:
+
+```powershell
+mamba --version
+```
+
 ### Install FFmpeg (Gyan build) via winget
 
 Install FFmpeg from Gyan.dev package on Windows:
