@@ -85,8 +85,8 @@ Optional additional settings:
 
 ```powershell
 $env:DIARIZATION_MODEL = "pyannote/speaker-diarization-community-1"
-$env:ASR_MODEL = "large-v3-turbo"  # alternative: large-v3
-$env:LANGUAGE = "de"               # or "auto"
+$env:ASR_MODEL = "large-v2"  # recommended for German; use large-v3 for English
+$env:LANGUAGE = "de"         # or "auto"
 ```
 
 ---
@@ -160,6 +160,26 @@ Generated files (next to the WAV):
 
 - `ASR_MODEL` (default: `large-v3-turbo`)
 - `LANGUAGE` (default: `en`, for German typically `de` or `auto`)
+
+### Recommended ASR model by language
+
+Based on current project testing:
+- **German meetings**: `ASR_MODEL=large-v2`
+- **English meetings**: `ASR_MODEL=large-v3`
+
+Example (German):
+
+```powershell
+$env:LANGUAGE = "de"
+$env:ASR_MODEL = "large-v2"
+```
+
+Example (English):
+
+```powershell
+$env:LANGUAGE = "en"
+$env:ASR_MODEL = "large-v3"
+```
 - `ASR_VAD_FILTER` (default: `true`)
 - `ASR_VAD_MIN_SILENCE_MS` (default: `300`)
 - `ASR_BEAM_SIZE` (default: `5`)
