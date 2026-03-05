@@ -52,19 +52,19 @@ ffmpeg -version
 
 Two environment profiles are provided:
 
-- **`environment-cuda.yml`** → Desktop with NVIDIA GPU (CUDA)
-- **`environment-cpu.yml`** → CPU-only (e.g. laptop without CUDA)
+- **`environment-cuda.yml`** → use this on systems with NVIDIA GPU (CUDA)
+- **`environment-cpu.yml`** → use this on systems without CUDA / NVIDIA
 
-> The Python script checks CUDA at runtime (`torch.cuda.is_available()`) and falls back to CPU automatically.
+You only need to create **one** environment per machine.
 
-### 1) Create CUDA profile
+### Option A: CUDA machine (NVIDIA)
 
 ```powershell
 mamba env create -f environment-cuda.yml
 mamba activate meeting-transcriber-cuda
 ```
 
-### 2) Create CPU profile
+### Option B: CPU-only machine
 
 ```powershell
 mamba env create -f environment-cpu.yml
@@ -116,6 +116,19 @@ This creates a WAV file in `$HOME\Recordings` by default.
 
 ---
 
+## Run transcription + diarization
+
+```powershell
+python .\transcribe_meeting.py "C:\Users\<USER>\Recordings\2026-03-05_09-00__Project_Kickoff.wav"
+```
+
+Generated files (next to the WAV):
+- `*_transcript.txt`
+- `*_transcript.srt`
+- `*_transcript.md`
+
+---
+
 ## Pipeline overview
 
 ```mermaid
@@ -152,19 +165,6 @@ A --> C --> E --> F
 
 I("🧠 Optional later:<br/>Speaker identity mapping<br/>SPK1 = Alice") -.-> F
 ```
-
----
-
-## Run transcription + diarization
-
-```powershell
-python .\transcribe_meeting.py "C:\Users\<USER>\Recordings\2026-03-05_09-00__Project_Kickoff.wav"
-```
-
-Generated files (next to the WAV):
-- `*_transcript.txt`
-- `*_transcript.srt`
-- `*_transcript.md`
 
 ---
 
