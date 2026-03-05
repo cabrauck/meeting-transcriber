@@ -17,6 +17,7 @@ Goal: run **locally**, use GPU acceleration when available (CUDA), otherwise CPU
 - `ffmpeg` available on the machine
 - Optional: NVIDIA GPU + current drivers for CUDA acceleration
 - Hugging Face token for diarization (`pyannote` models)
+- Accepted model terms on Hugging Face for the diarization model you use
 
 ### Install Miniforge3 via winget
 
@@ -73,12 +74,22 @@ mamba activate meeting-transcriber-cpu
 
 ---
 
-## Set Hugging Face token
+## Set up Hugging Face access (pyannote)
 
-PowerShell (temporary for current session):
+1) Create a Hugging Face access token.
+
+2) Accept model terms on Hugging Face:
+- For default model (`pyannote/speaker-diarization-community-1`): accept its user conditions.
+- If you switch to `pyannote/speaker-diarization-3.1`: accept both
+  - `pyannote/speaker-diarization-3.1`
+  - `pyannote/segmentation-3.0`
+
+3) Set token in PowerShell (temporary for current session):
 
 ```powershell
 $env:HUGGINGFACE_TOKEN = "hf_xxx..."
+# optional aliases supported by script:
+# $env:HF_TOKEN = "hf_xxx..."
 ```
 
 Optional additional settings:
@@ -189,6 +200,8 @@ $env:ASR_MODEL = "large-v3"
 - `ASR_CONDITION_ON_PREVIOUS_TEXT` (default: `true`)
 - `ASR_INITIAL_PROMPT` (optional)
 - `DIARIZATION_MODEL` (default: `pyannote/speaker-diarization-community-1`)
+- `NUM_SPEAKERS` (optional, fixed speaker count)
+- `MIN_SPEAKERS` / `MAX_SPEAKERS` (optional bounds when count is unknown)
 
 ### What `ASR_INITIAL_PROMPT` does and how to use it
 
@@ -216,6 +229,12 @@ Notes:
 
 ### `HUGGINGFACE_TOKEN is not set`
 Set the token as env var (see above).
+
+### pyannote pipeline cannot be loaded
+- Verify token is valid and exported (`HUGGINGFACE_TOKEN` or `HF_TOKEN`)
+- Accept required model terms on Hugging Face:
+  - `pyannote/speaker-diarization-community-1` (default)
+  - for `speaker-diarization-3.1`: also accept `pyannote/segmentation-3.0`
 
 ### CUDA is not used
 - Check NVIDIA drivers

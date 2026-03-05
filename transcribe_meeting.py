@@ -99,6 +99,16 @@ def env_float(name: str, default: float) -> float:
         return default
 
 
+def env_optional_int(name: str):
+    raw = os.getenv(name, "").strip()
+    if raw == "":
+        return None
+    try:
+        return int(raw)
+    except Exception:
+        return None
+
+
 def main():
     if len(sys.argv) < 2:
         print("Usage: python transcribe_meeting.py <audio.wav>")
@@ -171,9 +181,16 @@ def main():
     segs = list(segments)
 
     # ---------- Diarization (pyannote) ----------
-    token = os.getenv("HUGGINGFACE_TOKEN", "").strip()
+    token = (
+        os.getenv("HUGGINGFACE_TOKEN", "").strip()
+        or os.getenv("HF_TOKEN", "").strip()
+        or os.getenv("HUGGINGFACEHUB_API_TOKEN", "").strip()
+    )
     if not token:
-        sys.exit("HUGGINGFACE_TOKEN is not set.")
+        sys.exit(
+            "HUGGINGFACE_TOKEN is not set. "
+            "Set HUGGINGFACE_TOKEN (or HF_TOKEN) to a Hugging Face access token."
+        )
 
     diarization_model = os.getenv(
         "DIARIZATION_MODEL", "pyannote/speaker-diarization-community-1"
@@ -182,16 +199,47 @@ def main():
         diarization_model = "pyannote/speaker-diarization-community-1"
 
     print(f"Diarization: loading {diarization_model}…")
-    pipeline = Pipeline.from_pretrained(
-        diarization_model,
-        token=token,
-    )
+    try:
+        pipeline = Pipeline.from_pretrained(
+            diarization_model,
+            token=token,
+        )
+    except Exception as exc:
+        model_hint = (
+            "Accept user conditions on Hugging Face for "
+            "'pyannote/speaker-diarization-community-1'. "
+            if diarization_model == "pyannote/speaker-diarization-community-1"
+            else ""
+        )
+        if diarization_model == "pyannote/speaker-diarization-3.1":
+            model_hint = (
+                "Accept user conditions on Hugging Face for "
+                "'pyannote/speaker-diarization-3.1' and 'pyannote/segmentation-3.0'. "
+            )
+        sys.exit(
+            "Could not load pyannote diarization pipeline. "
+            + model_hint
+            + "Also verify your Hugging Face token has access.\n"
+            f"Details: {exc}"
+        )
 
     pipeline_device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     pipeline.to(pipeline_device)
 
     print(f"Diarization: running… (device={pipeline_device})")
-    diar_out = pipeline(str(audio_path))
+    diarization_kwargs = {}
+    num_speakers = env_optional_int("NUM_SPEAKERS")
+    min_speakers = env_optional_int("MIN_SPEAKERS")
+    max_speakers = env_optional_int("MAX_SPEAKERS")
+    if num_speakers is not None:
+        diarization_kwargs["num_speakers"] = num_speakers
+    else:
+        if min_speakers is not None:
+            diarization_kwargs["min_speakers"] = min_speakers
+        if max_speakers is not None:
+            diarization_kwargs["max_speakers"] = max_speakers
+
+    diar_out = pipeline(str(audio_path), **diarization_kwargs)
 
     # Normalize output across pyannote versions:
     # - legacy pipeline: returns Annotation directly
